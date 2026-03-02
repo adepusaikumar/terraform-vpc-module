@@ -6,12 +6,22 @@ resource "aws_vpc" "main" {
 
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
-  tags = {
-    Name = "main"
-  }
+  tags = local.igw_final_tags
 }
 
-resource "aws_subnet" "main" {
+
+/* # Public Subnets
+resource "aws_subnet" "public" {
   vpc_id = aws_vpc.main.id
-  cidr_block = ""
-}
+  count = length(var.public_subnet_cidrs)
+  cidr_block = var.public_subnet_cidrs[count.index]
+  availability_zone = ""
+  tags = merge(
+    local.common_tags,
+    {
+      # roboshop-dev-public-
+      Name = "${var.project}-public-${var.environment}"
+    },
+    var.public_subnet_tags
+  )
+} */
