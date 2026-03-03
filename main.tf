@@ -130,7 +130,7 @@ resource "aws_nat_gateway" "main" {
 resource "aws_route" "public" {
   route_table_id            = aws_route_table.public.id
   destination_cidr_block    = "0.0.0.0/0"
-  gateway_id =   aws_internet_gateway.main
+  gateway_id =   aws_internet_gateway.main.id
 }
 
 resource "aws_route" "private" {
@@ -141,7 +141,7 @@ resource "aws_route" "private" {
 }
 
 resource "aws_route" "database" {
-  route_table_id            = aws_route_table.database
+  route_table_id            = aws_route_table.database.id
   # engress traffic enablment using nat gateway
   destination_cidr_block    = "0.0.0.0/0"
   nat_gateway_id = aws_nat_gateway.main.id
@@ -149,19 +149,20 @@ resource "aws_route" "database" {
 }
 
 resource "aws_route_table_association" "public" {
-  count = length(aws_subnet.private)
-  route_table_id = aws_route_table.public[count.index].id
-  subnet_id      = aws_subnet.public
+  count = length(var.public_subnet_cidrs)
+  route_table_id = aws_route_table.public.id
+  subnet_id      = aws_subnet.public[count.index].id
 }
 
 resource "aws_route_table_association" "private" {
-  count = length(aws_subnet.private)
-  route_table_id = aws_route_table.private[count.index].id
-  subnet_id      = aws_subnet.private
+  count = length(var.private_subnet_cidrs)
+  route_table_id = aws_route_table.private.id
+  subnet_id      = aws_subnet.private[count.index].id
 }
 
 resource "aws_route_table_association" "database" {
+  count = length(var.database_subnet_cidrs)
   route_table_id = aws_route_table.database.id
-  subnet_id      = aws_subnet.database
+  subnet_id      = aws_subnet.database[count.index].id
 }
 
