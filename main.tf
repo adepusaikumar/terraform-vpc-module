@@ -110,7 +110,7 @@ resource "aws_eip" "nat" {
         var.eip_tags
   )
 }
-resource "aws_nat_gateway" "nat" {
+resource "aws_nat_gateway" "main" {
   count = aws_subnet.public
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public[0].id # we are creating this in us-east-1a AZ for cost optimization, we can create two nat's for two AZ's as well.
@@ -138,14 +138,14 @@ resource "aws_route" "private" {
   route_table_id            = aws_route_table.private.id
   # engress traffic enablment using nat gateway
   destination_cidr_block    = "0.0.0.0/0"
-  nat_gateway_id = aws_nat_gateway.nat.id
+  nat_gateway_id = aws_nat_gateway.main.id
 }
 
 resource "aws_route" "database" {
   route_table_id            = aws_route_table.database
   # engress traffic enablment using nat gateway
   destination_cidr_block    = "0.0.0.0/0"
-  nat_gateway_id = aws_nat_gateway.nat.id
+  nat_gateway_id = aws_nat_gateway.main.id
 
 }
 
