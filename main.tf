@@ -111,7 +111,6 @@ resource "aws_eip" "nat" {
   )
 }
 resource "aws_nat_gateway" "main" {
-  count = aws_subnet.public
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public[0].id # we are creating this in us-east-1a AZ for cost optimization, we can create two nat's for two AZ's as well.
 
