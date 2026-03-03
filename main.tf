@@ -141,7 +141,7 @@ resource "aws_route" "private" {
   nat_gateway_id = aws_nat_gateway.nat.id
 }
 
-resource "aws_route" "private" {
+resource "aws_route" "database" {
   route_table_id            = aws_route_table.database
   # engress traffic enablment using nat gateway
   destination_cidr_block    = "0.0.0.0/0"
